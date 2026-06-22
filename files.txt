@@ -1,0 +1,19 @@
+.env.template
+.gitignore
+README.md
+data/raw/analysis.xlsx
+data/raw/balancesheet.xlsx
+data/raw/cashflow.xlsx
+data/raw/companies.xlsx
+data/raw/documents.xlsx
+data/raw/financial_ratios.xlsx
+data/raw/market_cap.xlsx
+data/raw/peer_groups.xlsx
+data/raw/profitandloss.xlsx
+data/raw/prosandcons.xlsx
+data/raw/sectors.xlsx
+data/raw/stock_prices.xlsx
+docs/Nifty100_Project_Document_FINAL (1).pdf
+requirements.txt
+src/etl/clean_nav.py
+structure.txt
