@@ -3,10 +3,6 @@ from pathlib import Path
 
 from normaliser import normalize_dataframe
 from validator import dataset_summary
-from cleaner import clean_missing_values
-from cleaner import remove_duplicates
-from type_converter import convert_numeric_columns
-from exporter import export_csv
 
 # Project root directory
 ROOT_DIR = Path(__file__).resolve().parents[2]
@@ -14,7 +10,7 @@ ROOT_DIR = Path(__file__).resolve().parents[2]
 # Raw data directory
 RAW_DATA_DIR = ROOT_DIR / "data" / "raw"
 
-# Header mapping
+# Header mapping for each dataset
 HEADER_MAP = {
     "companies.xlsx": 1,
     "profitandloss.xlsx": 1,
@@ -49,50 +45,48 @@ DATA_FILES = {
 
 
 def load_excel(file_name):
+    """
+    Load and normalize a dataset.
+    """
 
     file_path = RAW_DATA_DIR / file_name
 
     header_row = HEADER_MAP[file_name]
 
-    df = pd.read_excel(
-        file_path,
-        header=header_row
-    )
+    try:
+        df = pd.read_excel(
+            file_path,
+            header=header_row
+        )
 
-    return df
+        df = normalize_dataframe(df)
+
+        return df
+
+    except Exception as e:
+        print(f"\nError loading {file_name}")
+        print(e)
+
+        return None
 
 
+# Dictionary to store datasets
 datasets = {}
 
+# Load all datasets
 for dataset_name, file_name in DATA_FILES.items():
 
-    print("\n" + "=" * 60)
-    print(dataset_name.upper())
-    print("=" * 60)
+    datasets[dataset_name] = load_excel(file_name)
 
-    # Load
-    df = load_excel(file_name)
+    if datasets[dataset_name] is not None:
 
-    # Normalize
-    df = normalize_dataframe(df)
+        print("\n" + "=" * 60)
+        print(dataset_name.upper())
+        print("=" * 60)
 
-    # Clean
-    df = clean_missing_values(df)
-    df = remove_duplicates(df)
+        print("\nColumns:")
+        print(datasets[dataset_name].columns)
 
-    # Convert Types
-    df = convert_numeric_columns(df)
+        dataset_summary(datasets[dataset_name])
 
-    # Store
-    datasets[dataset_name] = df
-
-    # Validation Summary
-    dataset_summary(df)
-
-    # Export
-    export_csv(
-        df,
-        f"{dataset_name}_clean.csv"
-    )
-
-print("\nAll datasets processed successfully.")
+print("\nAll datasets loaded successfully.")
